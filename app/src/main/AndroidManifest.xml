@@ -22,7 +22,8 @@
         </activity>
         <activity
             android:name=".activity.FullScreenVideoActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:screenOrientation="landscape">
 
         </activity>
     </application>

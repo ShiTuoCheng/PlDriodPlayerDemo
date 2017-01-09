@@ -8,8 +8,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +66,10 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
     private ImageView mOperationBg;
     private ImageView mOperationPercent;
 
+    private Toolbar toolbar;
+
+    private String title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +80,7 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         if (intent != null)
         {
             mVideoPath = intent.getStringExtra("videoUrl");
+            title = intent.getStringExtra("videoTitle");
         }
 
         mVideoView = (PLVideoTextureView) findViewById(R.id.videoView);
@@ -84,6 +92,17 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
         mOperationBg = (ImageView) findViewById(R.id.operation_bg);
         mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
+
+        toolbar = (Toolbar)findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (mVideoView.isPlaying()){
+            getSupportActionBar().hide();
+        }else {
+            getSupportActionBar().show();
+        }
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager
@@ -146,6 +165,23 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         mVideoView.start();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.fullscreen_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            mVideoView.stopPlayback();
+            this.finish();
+        }else if (id == R.id.ratio){
+            onClickSwitchScreen();
+        }
+        return true;
+    }
 
     @Override
     protected void onPause() {
@@ -173,24 +209,24 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         mVideoView.setDisplayOrientation(mRotation);
     }
 
-    public void onClickSwitchScreen(View v) {
+    public void onClickSwitchScreen() {
         mDisplayAspectRatio = (mDisplayAspectRatio + 1) % 5;
         mVideoView.setDisplayAspectRatio(mDisplayAspectRatio);
         switch (mVideoView.getDisplayAspectRatio()) {
             case PLVideoTextureView.ASPECT_RATIO_ORIGIN:
-                showToastTips("Origin mode");
+                showToastTips("原始比例");
                 break;
             case PLVideoTextureView.ASPECT_RATIO_FIT_PARENT:
-                showToastTips("Fit parent !");
+                showToastTips("自适应");
                 break;
             case PLVideoTextureView.ASPECT_RATIO_PAVED_PARENT:
-                showToastTips("Paved parent !");
+                showToastTips("平铺");
                 break;
             case PLVideoTextureView.ASPECT_RATIO_16_9:
-                showToastTips("16 : 9 !");
+                showToastTips("16 : 9");
                 break;
             case PLVideoTextureView.ASPECT_RATIO_4_3:
-                showToastTips("4 : 3 !");
+                showToastTips("4 : 3");
                 break;
             default:
                 break;
@@ -202,38 +238,38 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         public boolean onError(PLMediaPlayer mp, int errorCode) {
             switch (errorCode) {
                 case PLMediaPlayer.ERROR_CODE_INVALID_URI:
-                    showToastTips("Invalid URL !");
+                    showToastTips("无效地址 !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_404_NOT_FOUND:
-                    showToastTips("404 resource not found !");
+                    showToastTips("404 资源无效 !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_CONNECTION_REFUSED:
-                    showToastTips("Connection refused !");
+                    showToastTips("访问被拒绝 !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_CONNECTION_TIMEOUT:
-                    showToastTips("Connection timeout !");
+                    showToastTips("连接超时 !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_EMPTY_PLAYLIST:
                     showToastTips("Empty playlist !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_STREAM_DISCONNECTED:
-                    showToastTips("Stream disconnected !");
+                    showToastTips("连接断开!");
                     break;
                 case PLMediaPlayer.ERROR_CODE_IO_ERROR:
-                    showToastTips("Network IO Error !");
+                    showToastTips("连接出错!");
                     break;
                 case PLMediaPlayer.ERROR_CODE_UNAUTHORIZED:
-                    showToastTips("Unauthorized Error !");
+                    showToastTips("不可预知的错误!");
                     break;
                 case PLMediaPlayer.ERROR_CODE_PREPARE_TIMEOUT:
-                    showToastTips("Prepare timeout !");
+                    showToastTips("连接超时 !");
                     break;
                 case PLMediaPlayer.ERROR_CODE_READ_FRAME_TIMEOUT:
-                    showToastTips("Read frame timeout !");
+                    showToastTips("载入超时!");
                     break;
                 case PLMediaPlayer.MEDIA_ERROR_UNKNOWN:
                 default:
-                    showToastTips("unknown error !");
+                    showToastTips("不可预知的错误 !");
                     break;
             }
             // Todo pls handle the error status here, retry or call finish()

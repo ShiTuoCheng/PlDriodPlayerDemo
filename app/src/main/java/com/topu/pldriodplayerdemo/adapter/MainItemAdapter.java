@@ -55,7 +55,8 @@ public class MainItemAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         TextView itemTextV = ((ItemViewHolder)holder).itemTextView;
-        itemTextV.setText(data.get(position));
+        final String title = data.get(position);
+        itemTextV.setText(title);
         itemTextV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +64,7 @@ public class MainItemAdapter extends RecyclerView.Adapter {
                 Intent intent = new Intent(mContext, FullScreenVideoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 intent.putExtra("videoUrl", url);
+                intent.putExtra("videoTitle", title);
                 ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeScaleUpAnimation(view, view.getWidth() / 2, view.getHeight() / 2, 0,
                                 0);
