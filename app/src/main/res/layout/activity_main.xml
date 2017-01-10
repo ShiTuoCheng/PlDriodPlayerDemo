@@ -36,4 +36,17 @@
         android:layout_below="@id/tabBarLayout"
         android:id="@+id/viewPager"/>
 
+    <com.topu.pldriodplayerdemo.view.CountDownView
+        android:id="@+id/fragment_count_down"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        app:background_color="@color/colorPrimary"
+        app:border_color="@color/colorAccent"
+        app:border_width="2dp"
+        app:text="跳过广告"
+        app:text_color="#ffffff"
+        app:text_size="14dp"/>
+
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
+import android.widget.Toast;
 
 public class Utils {
 
@@ -41,5 +42,9 @@ public class Utils {
         location.right = location.left + v.getWidth();
         location.bottom = location.top + v.getHeight();
         return location;
+    }
+
+    public static void showToast(Context context, String str){
+        Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,13 +1,16 @@
 package com.topu.pldriodplayerdemo.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -18,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -44,7 +48,7 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
     private String mVideoPath = null;
     private int mRotation = 0;
     private int mDisplayAspectRatio = PLVideoTextureView.ASPECT_RATIO_FIT_PARENT; //default
-    private ProgressBar mLoadingView;
+    private LinearLayout mLoadingView;
     private boolean mIsActivityPaused = true;
 
     /**
@@ -70,6 +74,11 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
 
     private String title;
 
+    /**
+     * 提示播放器操作UI
+     */
+    private int userIsKnown = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +95,7 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         mVideoView = (PLVideoTextureView) findViewById(R.id.videoView);
 
 
-        mLoadingView = (ProgressBar) findViewById(R.id.LoadingView);
+        mLoadingView = (LinearLayout) findViewById(R.id.LoadingView);
         mVideoView.setBufferingIndicator(mLoadingView);
 
         mVolumeBrightnessLayout = findViewById(R.id.operation_volume_brightness);
@@ -158,6 +167,45 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
 
         mVideoView.setVideoPath(mVideoPath);
         mVideoView.start();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+
+        int getUserIsKnown = sharedPreferences.getInt("userIsKnow", 2);
+        final SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
+
+        //弹窗
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("小tips")
+                .setMessage("在左边滑动可调节亮度，右边滑动可调节音量")
+                .setPositiveButton("已阅", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+
+                        editor.putInt("userIsKnow", 1);
+
+                        editor.apply();
+                    }
+                });
+        //如果没有读取到数据
+        if ( getUserIsKnown == 2 ){
+            //SharePreference初始化
+
+            builder.create().show();
+            editor.putInt("userIsKnow", userIsKnown);
+            editor.apply();
+        } else if (getUserIsKnown == 0){
+
+            builder.create().show();
+        }
+
+
+
+
+
+
+
+
     }
 
     @Override

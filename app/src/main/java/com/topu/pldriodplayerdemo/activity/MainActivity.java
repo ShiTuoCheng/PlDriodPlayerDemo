@@ -11,10 +11,12 @@ import android.view.MenuItem;
 
 import com.topu.pldriodplayerdemo.R;
 import com.topu.pldriodplayerdemo.adapter.MainViewPagerAdapter;
+import com.topu.pldriodplayerdemo.utils.Utils;
+import com.topu.pldriodplayerdemo.view.CountDownView;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private CountDownView countDownView;
     private TabLayout mTabLayout;
     private ViewPager viewPager;
 
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private void initView(){
         mTabLayout = (TabLayout)findViewById(R.id.tabBarLayout);
         viewPager = (ViewPager)findViewById(R.id.viewPager);
+        countDownView = (CountDownView)findViewById(R.id.fragment_count_down);
 
         addTab("播放列表");
         addTab("评论");
@@ -54,6 +57,21 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        countDownView.setCountDownTimerListener(new CountDownView.CountDownTimerListener() {
+            @Override
+            public void onStartCount() {
+                Utils.showToast(getApplicationContext(), "开始了");
+            }
+
+            @Override
+            public void onFinishCount() {
+                Utils.showToast((getApplicationContext()), "结束了");
+
+            }
+        });
+
+        countDownView.start();
     }
 
     private void addTab(String str){
@@ -79,4 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
+
 }
