@@ -98,15 +98,10 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (mVideoView.isPlaying()){
-            getSupportActionBar().hide();
-        }else {
-            getSupportActionBar().show();
-        }
-
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager
                 .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
         mGestureDetector = new GestureDetector(this, new FullScreenVideoActivity.MyGestureListener());
 
         AVOptions options = new AVOptions();
@@ -288,6 +283,7 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         public void onCompletion(PLMediaPlayer plMediaPlayer) {
 //            finish();
             showToastTips("视频播放完成");
+            getSupportActionBar().show();
         }
     };
 
@@ -311,7 +307,6 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
         @Override
         public void onPrepared(PLMediaPlayer plMediaPlayer) {
 
-
         }
     };
 
@@ -327,6 +322,7 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
 //                        stopPlayer();
                     if (mVideoView != null) {
                         mVideoView.pause();
+                        getSupportActionBar().show();
                     }
                     needResume = true;
 //                    }
@@ -341,6 +337,7 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
 //                        startPlayer();
                         if (mVideoView != null) {
                             mVideoView.start();
+                            getSupportActionBar().hide();
                         }
                     mLoadingView.setVisibility(View.GONE);
                     break;
@@ -404,14 +401,19 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mGestureDetector.onTouchEvent(event))
-            return true;
 
-        // 处理手势结束
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_UP:
-                endGesture();
-                break;
+        //如果视频播放 手势才有效
+        if (mVideoView.isPlaying()){
+
+            if (mGestureDetector.onTouchEvent(event))
+                return true;
+
+            // 处理手势结束
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    endGesture();
+                    break;
+            }
         }
 
         return super.onTouchEvent(event);
@@ -429,24 +431,32 @@ public class FullScreenVideoActivity extends VideoPlayerBaseActivity {
 
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+        /**
+         * 单击
+         */
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            if (getSupportActionBar().isShowing()){
+                getSupportActionBar().hide();
+            }else {
+                getSupportActionBar().show();
+            }
+            return true;
+        }
+
         /** 双击 */
         @Override
         public boolean onDoubleTap(MotionEvent e) {
+//
+//            if(mDisplayAspectRatio == PLVideoTextureView.ASPECT_RATIO_FIT_PARENT){
+//                mDisplayAspectRatio = PLVideoTextureView.ASPECT_RATIO_PAVED_PARENT;
+//            }else {
+//                mDisplayAspectRatio = PLVideoTextureView.ASPECT_RATIO_FIT_PARENT;
+//            }
+//
+//            if (mVideoView != null) mVideoView.setDisplayAspectRatio(mDisplayAspectRatio);
 
-            if(mDisplayAspectRatio == PLVideoTextureView.ASPECT_RATIO_FIT_PARENT){
-                mDisplayAspectRatio = PLVideoTextureView.ASPECT_RATIO_PAVED_PARENT;
-            }else {
-                mDisplayAspectRatio = PLVideoTextureView.ASPECT_RATIO_FIT_PARENT;
-            }
-
-            if (mVideoView != null) mVideoView.setDisplayAspectRatio(mDisplayAspectRatio);
-//            if (mLayout == VideoView.VIDEO_LAYOUT_ZOOM)
-//                mLayout = VideoView.VIDEO_LAYOUT_ORIGIN;
-//            else
-//                mLayout++;
-//            if (mVideoView != null)
-//                mVideoView.setVideoLayout(mLayout, 0);
-            return true;
+            return false;
         }
 
         /** 滑动 */

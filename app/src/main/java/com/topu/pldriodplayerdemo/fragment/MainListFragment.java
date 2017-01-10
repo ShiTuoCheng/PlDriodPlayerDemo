@@ -3,6 +3,8 @@ package com.topu.pldriodplayerdemo.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.topu.pldriodplayerdemo.R;
 import com.topu.pldriodplayerdemo.adapter.MainItemAdapter;
+import com.topu.pldriodplayerdemo.utils.OnRecyclerViewOnClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +26,6 @@ public class MainListFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<String> data = new ArrayList<>();
 
-
-    public MainListFragment() {
-        // Required empty public constructor
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,18 +34,16 @@ public class MainListFragment extends Fragment {
 
         initView(v);
         loadData();
-        MainItemAdapter mainItemAdapter = new MainItemAdapter(data, getActivity().getApplicationContext());
-        GridLayoutManager linearLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
-
-
-        recyclerView.setAdapter(mainItemAdapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
         return v;
     }
 
     private void initView(View v){
         recyclerView = (RecyclerView)v.findViewById(R.id.recyclerView);
+        MainItemAdapter mainItemAdapter = new MainItemAdapter(data, getActivity().getApplicationContext());
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+
+        recyclerView.setAdapter(mainItemAdapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void loadData(){
